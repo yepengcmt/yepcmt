@@ -291,22 +291,29 @@
     <header>
         <div class="profile-container">
             <div class="profile-img-container">
-                <img src="https://via.placeholder.com/180" alt="Professor Peng Ye" class="profile-img" id="profileImage">
-                <div class="upload-btn" id="uploadBtn">
-                    <i class="fas fa-camera"></i>
-                </div>
-                <div class="upload-form" id="uploadForm">
-                    <h3>Upload Photo</h3>
-                    <input type="file" id="photoUpload" accept="image/*">
-                    <button class="btn" id="uploadSubmit">Upload</button>
-                </div>
+                <!-- Replace with your GitHub image URL -->
+                <img src="https://via.placeholder.com/200?text=Upload+to+GitHub" alt="Professor Peng Ye" class="profile-img" id="profileImage">
             </div>
             <div>
                 <h1>Professor Peng Ye</h1>
-                <p>School of Physics, Sun Yat-sen University</p>
+                <p class="university">School of Physics, Sun Yat-sen University</p>
             </div>
         </div>
     </header>
+    
+    <div class="github-instructions">
+        <h3><i class="fab fa-github"></i> How to Use Your GitHub Image</h3>
+        <ol>
+            <li><strong>Upload your photo to GitHub</strong>: Add your photo to your GitHub repository</li>
+            <li><strong>Get the direct URL</strong>: Click on your image in GitHub, then click "Download" to get the direct URL</li>
+            <li><strong>Replace the placeholder</strong>: Find the <code>&lt;img src="..."&gt;</code> tag in the HTML and replace the URL with your GitHub image URL</li>
+            <li><strong>Commit changes</strong>: Save and commit the updated HTML file to your GitHub repository</li>
+        </ol>
+        <p>Example GitHub image URL format: <code>https://raw.githubusercontent.com/username/repository/main/images/photo.jpg</code></p>
+        <a href="https://github.com/" class="github-btn" target="_blank">
+            <i class="fab fa-github"></i> Go to GitHub
+        </a>
+    </div>
     
     <section>
         <h2>About Me</h2>
