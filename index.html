@@ -3,77 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professor Ye - Homepage</title>
+    <title>Professor Peng Ye - Homepage</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #004080;
+            --secondary: #0066cc;
+            --accent: #e63946;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f8f8f8;
             color: #333;
-        }
-        header {
-            background-color: #004080;
-            color: white;
-            padding: 2em 0;
-            text-align: center;
-        }
-        section {
-            margin: 2em auto;
-            width: 80%;
-            max-width: 800px;
-            background-color: white;
-            padding: 2em;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1, h2, h3 {
-            color: #004080;
-        }
-        p {
             line-height: 1.6;
         }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2.5em 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent);
+        }
+        
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .profile-img-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background: #e0e0e0;
+            margin-bottom: 1.5rem;
+        }
+        
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .upload-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .upload-btn:hover {
+            transform: scale(1.1);
+            background: #c1121f;
+        }
+        
+        .upload-form {
+            display: none;
+            position: absolute;
+            bottom: -50px;
+            right: 0;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            width: 250px;
+        }
+        
+        .upload-form.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1, h2, h3 {
+            color: var(--primary);
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        h1::after, h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--accent);
+        }
+        
+        h2::after {
+            width: 40px;
+        }
+        
+        section {
+            margin: 2em auto;
+            width: 90%;
+            max-width: 1000px;
+            background-color: white;
+            padding: 2.5em;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        p {
+            margin-bottom: 1.2em;
+        }
+        
         footer {
             text-align: center;
-            padding: 1em 0;
-            background-color: #f0f0f0;
-            margin-top: 2em;
+            padding: 1.5em 0;
+            background-color: var(--dark);
+            color: white;
+            margin-top: 3em;
         }
+        
         ul {
             list-style-type: none;
             padding: 0;
         }
+        
         li {
-            margin-bottom: 1em;
+            margin-bottom: 1.2em;
+            padding-bottom: 1.2em;
+            border-bottom: 1px solid #eee;
+            position: relative;
+            padding-left: 20px;
         }
+        
+        li:last-child {
+            border-bottom: none;
+        }
+        
+        li::before {
+            content: "•";
+            color: var(--accent);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
         a {
-            color: #004080;
+            color: var(--secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        
+        a:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 1.5rem;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--secondary);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
             text-decoration: none;
         }
-        a:hover {
-            text-decoration: underline;
+        
+        .publication-year {
+            background: var(--primary);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin-right: 8px;
+        }
+        
+        .arxiv-link {
+            background: #f1f8ff;
+            color: #1a4480;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            text-decoration: none !important;
+            border: 1px solid #d0d7de;
+        }
+        
+        .arxiv-link:hover {
+            background: #e1ecff;
+            text-decoration: underline !important;
+        }
+        
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .btn:hover {
+            background: var(--primary);
+        }
+        
+        @media (max-width: 768px) {
+            .profile-container {
+                flex-direction: column;
+            }
+            
+            section {
+                width: 95%;
+                padding: 1.5em;
+            }
+            
+            header {
+                padding: 1.5em 0;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Professor Peng Ye</h1>
-        <p>School of Physics, Sun Yat-sen University</p>
-                 </header>
+        <div class="profile-container">
+            <div class="profile-img-container">
+                <img src="https://via.placeholder.com/180" alt="Professor Peng Ye" class="profile-img" id="profileImage">
+                <div class="upload-btn" id="uploadBtn">
+                    <i class="fas fa-camera"></i>
+                </div>
+                <div class="upload-form" id="uploadForm">
+                    <h3>Upload Photo</h3>
+                    <input type="file" id="photoUpload" accept="image/*">
+                    <button class="btn" id="uploadSubmit">Upload</button>
+                </div>
+            </div>
+            <div>
+                <h1>Professor Peng Ye</h1>
+                <p>School of Physics, Sun Yat-sen University</p>
+            </div>
+        </div>
+    </header>
+    
     <section>
         <h2>About Me</h2>
+        <p>叶鹏，中山大学教授（2018年-至今），汉族，籍贯四川。长期从事理论物理研究工作，特别专注于量子多体系统的新奇的演生现象的理论机制的研究。研究兴趣包括（1）量子多体理论（量子多体系统的纠缠熵标度、拓扑量子场论、强关联效应导致的非常规序、拓扑序、分形子拓扑序和分形子超流、对称保护拓扑态、对称富化拓扑态、量子反常、稳定子编码模型等严格可解的格点模型构造、拓扑物态的量子线路等）和（2） 理论物理交叉领域（与凝聚态物理交叉的量子信息、高能物理和量子引力、数学物理问题）。</p>
+        <p>个人经历：2007年6月在中山大学物理系获学士学位。2012年6月在清华大学高等研究院获物理学博士学位（导师：翁征宇 教授）。2012年9月-2015年8月在加拿大圆周理论物理研究所（Perimeter Institute for Theo. Phys.）从事博士后研究工作（合作导师：Prof. X.-G. Wen）。2015年8月-2018年8月在美国伊利诺伊大学香槟分校（Univ. of Illinois at Urbana-Champaign）物理系与Anthony J. Leggett凝聚态理论研究所从事博士后研究工作（合作导师：Prof. E. Fradkin），任Gordon & Betty Moore Fellow。2015年11月，在哈佛大学数学科学与应用中心访学（Associate）。2018年8月受聘为中山大学物理学院教授兼博士生导师至今，得到了国家级海外(2018)、省级(2019)、校级(2018)、校级(2023)人才项目的支持。</p>
         
-        <p>叶鹏，中山大学教授（2018年-至今），汉族，籍贯四川。长期从事理论物理研究工作，特别专注于量子多体系统的新奇的演生现象的理论机制的研究。研究兴趣包括（1）量子多体理论（量子多体系统的纠缠熵标度、拓扑量子场论、强关联效应导致的非常规序、拓扑序、分形子拓扑序和分形子超流、对称保护拓扑态、对称富化拓扑态、量子反常、稳定子编码模型等严格可解的格点模型构造、拓扑物态的量子线路等）和（2） 理论物理交叉领域（与凝聚态物理交叉的量子信息、高能物理和量子引力、数学物理问题）。
-</p>
-<p>个人经历：2007年6月在中山大学物理系获学士学位。2012年6月在清华大学高等研究院获物理学博士学位（导师：翁征宇 教授）。2012年9月-2015年8月在加拿大圆周理论物理研究所（Perimeter Institute for Theo. Phys.）从事博士后研究工作（合作导师：Prof. X.-G. Wen）。2015年8月-2018年8月在美国伊利诺伊大学香槟分校（Univ. of Illinois at Urbana-Champaign）物理系与Anthony J. Leggett凝聚态理论研究所从事博士后研究工作（合作导师：Prof. E. Fradkin），任Gordon & Betty Moore Fellow。2015年11月，在哈佛大学数学科学与应用中心访学（Associate）。2018年8月受聘为中山大学物理学院教授兼博士生导师至今，得到了国家级海外(2018)、省级(2019)、校级(2018)、校级(2023)人才项目的支持。
-</p>
-          <p>ORCID: <a href="https://orcid.org/0000-0002-6251-677X" target="_blank">https://orcid.org/0000-0002-6251-677X</a></p>
-                <p>SYSU homepage: <a href="https://spe.sysu.edu.cn/node/2454" target="_blank">https://spe.sysu.edu.cn/node/2454</a></p>
-                <p>Google sites (ENGLISH): <a href="https://sites.google.com/site/yphysics/home" target="_blank">https://sites.google.com/site/yphysics/home</a></p>
-
-       
-           
-        
-       
+        <div class="social-links">
+            <a href="https://orcid.org/0000-0002-6251-677X" target="_blank" title="ORCID"><i class="fab fa-orcid"></i></a>
+            <a href="https://spe.sysu.edu.cn/node/2454" target="_blank" title="SYSU Homepage"><i class="fas fa-university"></i></a>
+            <a href="https://sites.google.com/site/yphysics/home" target="_blank" title="Google Sites"><i class="fab fa-google"></i></a>
+            <a href="mailto:example@sysu.edu.cn" title="Email"><i class="fas fa-envelope"></i></a>
+        </div>
+    </section>
+    
+    <section>
         <h2>Publications</h2>
         <ul>
    <li>60 [25a] Yu-Tao Hu, Meng-Yuan Li, and PY, arXiv:2503.05374. Title: Preparing Code States via Seed-Entangler-Enriched Sequential Quantum Circuits: Application to Tetra-Digit Topological Error-Correcting Codes. 标题：通过“种子-纠缠机富化”的序列量子线路制备编码态：在“四位数”拓扑纠错码中的应用</li>
@@ -197,13 +445,54 @@
 <li>1 [07a] PY, Xiao-Lu Yu, Yi Guan, and Xiang-Qian Luo, Mod. Phys. Lett. A 22, 547 (2007). Title: Overlap fermions in the strong coupling limit. 标题：强耦合极限下的重叠费米子</li>
 
 
+
             
-            <!-- Add more publications as needed -->
         </ul>
-        
     </section>
+    
     <footer>
         <p>&copy; 2025 Professor Peng Ye. All rights reserved.</p>
+        <p>School of Physics, Sun Yat-sen University</p>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadBtn = document.getElementById('uploadBtn');
+            const uploadForm = document.getElementById('uploadForm');
+            const uploadSubmit = document.getElementById('uploadSubmit');
+            const photoUpload = document.getElementById('photoUpload');
+            const profileImage = document.getElementById('profileImage');
+            
+            // Toggle upload form visibility
+            uploadBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                uploadForm.classList.toggle('active');
+            });
+            
+            // Close form when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!uploadForm.contains(e.target) {
+                    uploadForm.classList.remove('active');
+                }
+            });
+            
+            // Handle photo upload (client-side only for demo)
+            uploadSubmit.addEventListener('click', function() {
+                if (photoUpload.files && photoUpload.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        profileImage.src = e.target.result;
+                        uploadForm.classList.remove('active');
+                        alert('Photo updated successfully!');
+                    }
+                    
+                    reader.readAsDataURL(photoUpload.files[0]);
+                } else {
+                    alert('Please select a photo to upload');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
