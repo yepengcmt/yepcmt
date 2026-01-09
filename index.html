@@ -259,6 +259,77 @@
                 justify-content: center;
             }
         }
+
+        /* ---------------------------
+   Topic labels: compact badge cloud
+   --------------------------- */
+.topic-labels {
+  /* 可选：让这块更紧凑一点 */
+  padding: 1.6em 2.0em;
+}
+
+/* 取消 topic labels 的 hover 上浮（可选，不想它动就开） */
+.topic-labels:hover {
+  transform: none;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.topic-labels .hint {
+  margin: 0.2em 0 0.9em 0;
+  color: var(--gray);
+  font-size: 0.92em;
+}
+
+/* 关键：覆盖你全局的 li 样式 */
+.topic-labels .label-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;           /* 行间距/列间距 */
+  margin: 0;
+  padding: 0;
+}
+
+.topic-labels .label-list li {
+  /* 覆盖全局 publications li 的“长条样式” */
+  margin: 0;
+  padding: 0;
+  border: none;
+  padding-left: 0;
+  white-space: nowrap;
+
+  /* 让每个标签像一个小卡片 */
+  background: #fbfbfc;
+  border: 1px solid #eee;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.92em;
+  line-height: 1.2;
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.topic-labels .label-list li::before {
+  content: none; /* 取消你全局的红点 bullet */
+}
+
+.topic-labels .label-list li:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+  border-color: #e2e2e2;
+}
+
+.topic-labels .tag {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  background: rgba(0, 102, 204, 0.10);  /* 用你的 secondary 系配色 */
+  color: var(--secondary);
+  border: 1px solid rgba(0, 102, 204, 0.25);
+  border-radius: 999px;
+  padding: 1px 8px;
+  margin-right: 6px;
+  font-size: 0.95em;
+}
+
+        
     </style>
 </head>
 <body>
