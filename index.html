@@ -633,294 +633,289 @@ window.MathJax = {
 
 <li>1 [07a] PY, Xiao-Lu Yu, Yi Guan, and Xiang-Qian Luo, Mod. Phys. Lett. A 22, 547 (<span style="font-weight: 550; letter-spacing: 0.03em;">2007</span>). Title: Overlap fermions in the strong coupling limit. 标题：强耦合极限下的重叠费米子<span class="paper-tags"><span class="ptag">[LATT]</span></span></li>   
             
-        
-    </ul>
+            </ul>
 </section>
     
     <footer>
         <p>&copy; 2026 Professor Peng Ye. All rights reserved.</p>
         <p>School of Physics, Sun Yat-sen University</p>
     </footer>
-   <!-- ===========================
-     Paper tooltip (auto arXiv abstract)
-     =========================== -->
-<div id="paperTooltip" class="paper-tooltip" role="tooltip" aria-hidden="true">
-  <div class="tt-title" id="ttTitle"></div>
-  <div class="tt-abs" id="ttAbs"></div>
-  <div class="tt-hint" id="ttHint">Hover to preview abstract</div>
-</div>
 
-<script>
-(function () {
-  // ----------------------------
-  // Config
-  // ----------------------------
-  const OFFSET = 14;      // 鼠标与浮窗的偏移
-  const MARGIN = 10;      // 离窗口边缘最小距离
-  const LS_PREFIX = 'arxiv_abs_v1:';  // localStorage key 前缀
-  const CACHE_TTL_MS = 1000 * 60 * 60 * 24 * 30; // 30 天缓存
+    <!-- ===========================
+         Paper tooltip (auto arXiv abstract)
+         =========================== -->
+    <div id="paperTooltip" class="paper-tooltip" role="tooltip" aria-hidden="true">
+      <div class="tt-title" id="ttTitle"></div>
+      <div class="tt-abs" id="ttAbs"></div>
+      <div class="tt-hint" id="ttHint">Hover to preview abstract</div>
+    </div>
 
-  // arXiv API（可能被 CORS 拦），提供 fallback
-  const API_DIRECT = (idList) => `https://export.arxiv.org/api/query?search_query=id:${encodeURIComponent(idList)}&start=0&max_results=1`;
-  // 备用：jina.ai 作为 CORS 代理（通常能解决纯静态站点跨域）
-  const API_PROXY  = (url) => `https://r.jina.ai/${url}`;
+    <script>
+    (function () {
+      // ----------------------------
+      // Config
+      // ----------------------------
+      const OFFSET = 14;      // 鼠标与浮窗的偏移
+      const MARGIN = 10;      // 离窗口边缘最小距离
+      const LS_PREFIX = 'arxiv_abs_v2:';      // localStorage key 前缀
+      const CACHE_TTL_MS = 1000 * 60 * 60 * 24 * 30; // 30 天缓存
 
-  // ----------------------------
-  // Tooltip elements
-  // ----------------------------
-  const tooltip = document.getElementById('paperTooltip');
-  const ttTitle = document.getElementById('ttTitle');
-  const ttAbs   = document.getElementById('ttAbs');
-  const ttHint  = document.getElementById('ttHint');
+      // ----------------------------
+      // Tooltip elements
+      // ----------------------------
+      const tooltip = document.getElementById('paperTooltip');
+      const ttTitle = document.getElementById('ttTitle');
+      const ttAbs   = document.getElementById('ttAbs');
+      const ttHint  = document.getElementById('ttHint');
 
-  if (!tooltip || !ttTitle || !ttAbs) return;
+      if (!tooltip || !ttTitle || !ttAbs || !ttHint) return;
 
-  // ----------------------------
-  // Helpers
-  // ----------------------------
-  function escapeHTML(s) {
-    return String(s)
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#39;');
-  }
+      // ----------------------------
+      // Helpers
+      // ----------------------------
+      function escapeHTML(s) {
+        return String(s)
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#39;');
+      }
 
-  function normalizeArxivIdFromHref(href) {
-    // 支持：
-    // https://arxiv.org/abs/2512.21148
-    // https://arxiv.org/abs/1801.01638v3
-    // https://arxiv.org/abs/hep-th/9901001
-    try {
-      const m = href.match(/arxiv\.org\/abs\/([^?#]+)/i);
-      if (!m) return null;
-      const full = m[1].trim();
-      const base = full.replace(/v\d+$/i, ''); // 去掉版本号，方便 API 查询
-      return { full, base };
-    } catch (e) {
-      return null;
-    }
-  }
+      function extractTitleFromLI(li) {
+        // 你的页面里一般是： "Title: .... 标题：...."
+        const text = li.textContent || '';
+        const m = text.match(/Title:\s*([\s\S]*?)(?:标题：|$)/);
+        if (m && m[1]) return m[1].trim().replace(/\s+/g, ' ');
+        const a = li.querySelector('a[href*="arxiv.org/abs/"]');
+        return a ? a.textContent.trim() : 'Paper';
+      }
 
-  function extractTitleFromLI(li) {
-    // 你页面里一般是： "Title: .... 标题：...."
-    const text = li.textContent || '';
-    const m = text.match(/Title:\s*([\s\S]*?)(?:标题：|$)/);
-    if (m && m[1]) return m[1].trim().replace(/\s+/g, ' ');
-    // fallback：用 arXiv id
-    const a = li.querySelector('a[href*="arxiv.org/abs/"]');
-    return a ? a.textContent.trim() : 'Paper';
-  }
+      function normalizeArxivIdFromHref(href) {
+        // 支持：
+        // https://arxiv.org/abs/2512.21148
+        // https://arxiv.org/abs/1801.01638v3
+        // https://arxiv.org/abs/hep-th/9901001
+        const m = String(href).match(/arxiv\.org\/abs\/([^?#]+)/i);
+        if (!m) return null;
+        const full = m[1].trim();
+        const base = full.replace(/v\d+$/i, ''); // 去掉版本号，方便 API 查询
+        return { full, base };
+      }
 
-  function getCache(arxivBaseId) {
-    try {
-      const raw = localStorage.getItem(LS_PREFIX + arxivBaseId);
-      if (!raw) return null;
-      const obj = JSON.parse(raw);
-      if (!obj || !obj.ts || !obj.summary) return null;
-      if (Date.now() - obj.ts > CACHE_TTL_MS) return null;
-      return obj;
-    } catch (e) {
-      return null;
-    }
-  }
+      function getCache(arxivBaseId) {
+        try {
+          const raw = localStorage.getItem(LS_PREFIX + arxivBaseId);
+          if (!raw) return null;
+          const obj = JSON.parse(raw);
+          if (!obj || !obj.ts || !obj.summaryHTML) return null;
+          if (Date.now() - obj.ts > CACHE_TTL_MS) return null;
+          return obj;
+        } catch (e) {
+          return null;
+        }
+      }
 
-  function setCache(arxivBaseId, payload) {
-    try {
-      localStorage.setItem(LS_PREFIX + arxivBaseId, JSON.stringify({
-        ts: Date.now(),
-        ...payload
-      }));
-    } catch (e) {}
-  }
+      function setCache(arxivBaseId, payload) {
+        try {
+          localStorage.setItem(LS_PREFIX + arxivBaseId, JSON.stringify({
+            ts: Date.now(),
+            ...payload
+          }));
+        } catch (e) {}
+      }
 
-  async function fetchArxivAbstract(arxivBaseId) {
-    // 1) 先试 direct
-    const directUrl = API_DIRECT(arxivBaseId);
-    let xmlText = null;
+      async function fetchText(url) {
+        const r = await fetch(url, { cache: 'no-store' });
+        if (!r.ok) throw new Error(`HTTP ${r.status} for ${url}`);
+        return await r.text();
+      }
 
-    try {
-      const r = await fetch(directUrl, { mode: 'cors', cache: 'no-store' });
-      if (r.ok) xmlText = await r.text();
-    } catch (e) {}
+      async function fetchTextWithFallback(originUrl) {
+        // 1) direct
+        try { return await fetchText(originUrl); } catch (e) {}
 
-    // 2) direct 不行 -> 走 proxy
-    if (!xmlText) {
-      const proxied = API_PROXY(directUrl);
-      const r2 = await fetch(proxied, { cache: 'no-store' });
-      if (!r2.ok) throw new Error('Failed to fetch arXiv API (proxy).');
-      xmlText = await r2.text();
-    }
+        // 2) multi-proxy fallback
+        const proxies = [
+          // usually reliable, returns raw body
+          (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+          // sometimes works, sometimes blocked
+          (u) => `https://r.jina.ai/${u}`,
+          // another variant some networks accept
+          (u) => `https://r.jina.ai/http://r.jina.ai/${u}`,
+        ];
 
-    // arXiv API 是 Atom XML；用 DOMParser 解析
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(xmlText, 'text/xml');
+        let lastErr = null;
+        for (const p of proxies) {
+          try {
+            return await fetchText(p(originUrl));
+          } catch (e) {
+            lastErr = e;
+          }
+        }
+        throw lastErr || new Error('All fetch attempts failed');
+      }
 
-    // 有时 proxy 返回的内容会多一层文本包装，尽量容错
-    const entry = doc.querySelector('entry');
-    if (!entry) {
-      // 再尝试从纯文本里找 <summary>...</summary>
-      const mm = xmlText.match(/<summary[^>]*>([\s\S]*?)<\/summary>/i);
-      if (!mm) throw new Error('No entry/summary found.');
-      return mm[1].replace(/\s+/g, ' ').trim();
-    }
+      function parseAtomSummary(xmlText) {
+        // Prefer DOMParser, fallback to regex
+        try {
+          const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
+          const entry = doc.querySelector('entry');
+          const summaryNode = entry && entry.querySelector('summary');
+          if (!summaryNode) return null;
+          return summaryNode.textContent.replace(/\r/g, '').trim();
+        } catch (e) {}
 
-    const summaryNode = entry.querySelector('summary');
-    if (!summaryNode) throw new Error('No summary found.');
-    // arXiv summary 通常包含换行与多空格
-    const summary = summaryNode.textContent.replace(/\r/g, '').trim();
-    return summary;
-  }
+        const m = xmlText.match(/<summary[^>]*>([\s\S]*?)<\/summary>/i);
+        return m ? m[1].replace(/\s+/g, ' ').trim() : null;
+      }
 
-  async function ensureAbstract(li) {
-    // A) 你手工写了 <div class="paper-abstract" hidden> 就优先用它
-    const existing = li.querySelector('.paper-abstract');
-    if (existing && existing.textContent.trim().length > 0) {
-      return {
-        source: 'inline',
-        summaryHTML: existing.innerHTML.trim()
-      };
-    }
+      function parseAbsHtml(htmlText) {
+        try {
+          const doc = new DOMParser().parseFromString(htmlText, 'text/html');
+          const bq = doc.querySelector('blockquote.abstract');
+          if (!bq) return null;
+          const descriptor = bq.querySelector('.descriptor');
+          if (descriptor) descriptor.remove();
+          return bq.textContent.replace(/\r/g, '').trim();
+        } catch (e) {
+          return null;
+        }
+      }
 
-    // B) 自动抓取 arXiv
-    const a = li.querySelector('a[href*="arxiv.org/abs/"]');
-    if (!a) throw new Error('No arXiv link found in this item.');
+      async function fetchArxivAbstract(arxivBaseId) {
+        // Route A: arXiv Atom API
+        const apiUrl = `https://export.arxiv.org/api/query?search_query=id:${encodeURIComponent(arxivBaseId)}&start=0&max_results=1`;
+        try {
+          const xml = await fetchTextWithFallback(apiUrl);
+          const summary = parseAtomSummary(xml);
+          if (summary) return summary;
+        } catch (e) {
+          // continue
+        }
 
-    const id = normalizeArxivIdFromHref(a.href);
-    if (!id) throw new Error('Cannot parse arXiv id.');
-    li.dataset.arxivId = id.full;
-    li.dataset.arxivBaseId = id.base;
+        // Route B: scrape arxiv abs page
+        const absUrl = `https://arxiv.org/abs/${encodeURIComponent(arxivBaseId)}`;
+        const html = await fetchTextWithFallback(absUrl);
+        const abs = parseAbsHtml(html);
+        if (abs) return abs;
 
-    // 先查 localStorage 缓存
-    const cached = getCache(id.base);
-    if (cached && cached.summary) {
-      return {
-        source: 'cache',
-        summaryHTML: cached.summaryHTML
-      };
-    }
+        throw new Error('No abstract found.');
+      }
 
-    const summaryText = await fetchArxivAbstract(id.base);
+      async function ensureAbstract(li) {
+        // A) 手写的 paper-abstract 优先
+        const existing = li.querySelector('.paper-abstract');
+        if (existing && existing.textContent.trim().length > 0) {
+          return { source: 'inline', summaryHTML: existing.innerHTML.trim() };
+        }
 
-    // 注意：我们把摘要作为“纯文本”插入（避免 HTML 注入），但保留 TeX 符号 $...$
-    const safeHTML = escapeHTML(summaryText).replace(/\n{2,}/g, '\n\n').replace(/\n/g, '<br>');
+        // B) 自动抓 arXiv
+        const a = li.querySelector('a[href*="arxiv.org/abs/"]');
+        if (!a) throw new Error('No arXiv link found.');
 
-    // 缓存
-    setCache(id.base, { summaryHTML: safeHTML });
+        const id = normalizeArxivIdFromHref(a.href);
+        if (!id) throw new Error('Cannot parse arXiv id.');
 
-    return {
-      source: 'api',
-      summaryHTML: safeHTML
-    };
-  }
+        const cached = getCache(id.base);
+        if (cached) return { source: 'cache', summaryHTML: cached.summaryHTML };
 
-  function typesetMath(el) {
-    // 只对 tooltip 内容重新 typeset，避免全页重排
-    if (window.MathJax && MathJax.typesetPromise) {
-      return MathJax.typesetPromise([el]).catch(() => {});
-    }
-    return Promise.resolve();
-  }
+        const summaryText = await fetchArxivAbstract(id.base);
 
-  // ----------------------------
-  // Tooltip show/hide/move
-  // ----------------------------
-  function showTooltipLoading(li, evt) {
-    ttTitle.textContent = extractTitleFromLI(li);
-    ttAbs.innerHTML = '<em>Loading abstract from arXiv…</em>';
-    ttHint.textContent = 'Fetching arXiv abstract';
-    tooltip.style.display = 'block';
-    tooltip.setAttribute('aria-hidden', 'false');
-    moveTooltip(evt);
-  }
+        // 作为纯文本插入（安全），并保留换行显示
+        const safeHTML = escapeHTML(summaryText).replace(/\n{2,}/g, '\n\n').replace(/\n/g, '<br>');
 
-  async function showTooltip(li, evt) {
-    showTooltipLoading(li, evt);
+        setCache(id.base, { summaryHTML: safeHTML });
+        return { source: 'api', summaryHTML: safeHTML };
+      }
 
-    try {
-      const { summaryHTML, source } = await ensureAbstract(li);
+      function typesetMath(el) {
+        if (window.MathJax && MathJax.typesetPromise) {
+          return MathJax.typesetPromise([el]).catch(() => {});
+        }
+        return Promise.resolve();
+      }
 
-      ttTitle.textContent = extractTitleFromLI(li);
-      ttAbs.innerHTML = summaryHTML;
+      // ----------------------------
+      // Tooltip show/hide/move
+      // ----------------------------
+      function moveTooltip(evt) {
+        if (tooltip.style.display !== 'block') return;
 
-      ttHint.textContent =
-        source === 'inline' ? 'Local abstract (inline)'
-        : source === 'cache' ? 'Cached from arXiv'
-        : 'From arXiv';
+        let x = evt.clientX + OFFSET;
+        let y = evt.clientY + OFFSET;
 
-      // MathJax 渲染 tooltip 内部 TeX
-      await typesetMath(ttAbs);
+        const rect = tooltip.getBoundingClientRect();
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
 
-      moveTooltip(evt);
-    } catch (err) {
-      ttAbs.innerHTML = '<em>Failed to load abstract.</em>';
-      ttHint.textContent = 'Tip: check CORS/proxy availability';
-      moveTooltip(evt);
-    }
-  }
+        if (x + rect.width + MARGIN > vw) {
+          x = Math.max(MARGIN, vw - rect.width - MARGIN);
+        }
+        if (y + rect.height + MARGIN > vh) {
+          y = Math.max(MARGIN, evt.clientY - rect.height - OFFSET);
+        }
 
-  function hideTooltip() {
-    tooltip.style.display = 'none';
-    tooltip.setAttribute('aria-hidden', 'true');
-  }
+        tooltip.style.left = x + 'px';
+        tooltip.style.top  = y + 'px';
+      }
 
-  function moveTooltip(evt) {
-    if (tooltip.style.display !== 'block') return;
+      function hideTooltip() {
+        tooltip.style.display = 'none';
+        tooltip.setAttribute('aria-hidden', 'true');
+      }
 
-    let x = evt.clientX + OFFSET;
-    let y = evt.clientY + OFFSET;
+      async function showTooltip(li, evt) {
+        ttTitle.textContent = extractTitleFromLI(li);
+        ttAbs.innerHTML = '<em>Loading abstract…</em>';
+        ttHint.textContent = 'Fetching from arXiv';
+        tooltip.style.display = 'block';
+        tooltip.setAttribute('aria-hidden', 'false');
+        moveTooltip(evt);
 
-    const rect = tooltip.getBoundingClientRect();
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+        try {
+          const { summaryHTML, source } = await ensureAbstract(li);
+          ttTitle.textContent = extractTitleFromLI(li);
+          ttAbs.innerHTML = summaryHTML;
 
-    if (x + rect.width + MARGIN > vw) {
-      x = Math.max(MARGIN, vw - rect.width - MARGIN);
-    }
-    if (y + rect.height + MARGIN > vh) {
-      y = Math.max(MARGIN, evt.clientY - rect.height - OFFSET);
-    }
+          ttHint.textContent =
+            source === 'inline' ? 'Local abstract (inline)'
+            : source === 'cache' ? 'Cached from arXiv'
+            : 'From arXiv';
 
-    tooltip.style.left = x + 'px';
-    tooltip.style.top  = y + 'px';
-  }
+          await typesetMath(ttAbs);
+          moveTooltip(evt);
+        } catch (err) {
+          ttAbs.innerHTML = '<em>Failed to load abstract.</em>';
+          ttHint.textContent = 'Tip: network/proxy may block arXiv requests';
+          moveTooltip(evt);
+        }
+      }
 
-  // ----------------------------
-  // Auto-bind all arXiv items
-  // ----------------------------
-  // 统一：凡是“包含 arxiv.org/abs 链接”的 <li> 都变成 paper-item，并绑定 hover
-  const arxivAnchors = Array.from(document.querySelectorAll('a[href*="arxiv.org/abs/"]'));
+      // ----------------------------
+      // Auto-bind: all <li> that contain an arXiv abs link
+      // ----------------------------
+      const arxivAnchors = Array.from(document.querySelectorAll('a[href*="arxiv.org/abs/"]'));
+      const lis = Array.from(new Set(
+        arxivAnchors.map(a => a.closest('li')).filter(Boolean)
+      ));
 
-  const lis = Array.from(new Set(
-    arxivAnchors
-      .map(a => a.closest('li'))
-      .filter(Boolean)
-  ));
+      lis.forEach(li => {
+        li.classList.add('paper-item');
+        if (!li.hasAttribute('tabindex')) li.setAttribute('tabindex', '0');
 
-  lis.forEach(li => {
-    li.classList.add('paper-item');
+        li.addEventListener('mouseenter', (evt) => showTooltip(li, evt));
+        li.addEventListener('mousemove', moveTooltip);
+        li.addEventListener('mouseleave', hideTooltip);
 
-    // 为键盘可访问性加 tabindex
-    if (!li.hasAttribute('tabindex')) li.setAttribute('tabindex', '0');
+        li.addEventListener('focus', (evt) => showTooltip(li, evt));
+        li.addEventListener('blur', hideTooltip);
+      });
 
-    // 绑定 hover
-    li.addEventListener('mouseenter', (evt) => showTooltip(li, evt));
-    li.addEventListener('mousemove', moveTooltip);
-    li.addEventListener('mouseleave', hideTooltip);
+      window.addEventListener('scroll', hideTooltip, { passive: true });
+    })();
+    </script>
 
-    // 绑定 focus（Tab 到论文条目时也能预览）
-    li.addEventListener('focus', (evt) => showTooltip(li, evt));
-    li.addEventListener('blur', hideTooltip);
-  });
-
-  // 滚动隐藏，避免位置错乱
-  window.addEventListener('scroll', hideTooltip, { passive: true });
-
-})();
-</script>
-
-
-    
 </body>
 </html>
+
