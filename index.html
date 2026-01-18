@@ -1,6 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  },
+  options: {
+    skipHtmlTags: ['script', 'style', 'textarea']
+  }
+};
+</script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Professor Peng Ye - Homepage</title>
@@ -644,22 +660,26 @@
   const OFFSET = 14; // 鼠标与浮窗的偏移
   const MARGIN = 10; // 离窗口边缘最小距离
 
-  function showTooltip(li, evt) {
-    const abs = li.getAttribute('data-abstract');
-    if (!abs || !abs.trim()) return;
+ function showTooltip(li, evt) {
+  const absDiv = li.querySelector('.paper-abstract');
+  if (!absDiv) return;
 
-    // 标题：取 li 的前一段文本作为标题（你也可以改成更精确的选择器）
-    // 这里简单拿 arXiv 链接文本 + Title 前半截（尽量不复杂）
-    const arxiv = li.querySelector('a[href*="arxiv.org/abs/"]');
-    const arxivText = arxiv ? arxiv.textContent.trim() : 'Paper';
-    ttTitle.textContent = arxivText;
+  ttTitle.textContent =
+    li.querySelector('a[href*="arxiv.org/abs/"]')?.textContent ?? 'Paper';
 
-    ttAbs.textContent = abs.trim();
+  ttAbs.innerHTML = absDiv.innerHTML.trim();
 
-    tooltip.style.display = 'block';
-    tooltip.setAttribute('aria-hidden', 'false');
-    moveTooltip(evt);
+  tooltip.style.display = 'block';
+  tooltip.setAttribute('aria-hidden', 'false');
+
+  // ★ 关键：让 MathJax 重新渲染 tooltip 里的公式
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise([ttAbs]);
   }
+
+  moveTooltip(evt);
+}
+
 
   function hideTooltip() {
     tooltip.style.display = 'none';
