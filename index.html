@@ -1,6 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  },
+  options: {
+    skipHtmlTags: ['script', 'style', 'textarea']
+  }
+};
+</script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+
+
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Professor Peng Ye - Homepage</title>
@@ -347,6 +366,46 @@
   color: #1f2a37;
   white-space: nowrap;
 }
+
+        /* ---------------------------
+   Paper abstract tooltip
+   --------------------------- */
+.paper-tooltip{
+  position: fixed;
+  z-index: 9999;
+  max-width: min(520px, calc(100vw - 24px));
+  background: rgba(255,255,255,0.98);
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.16);
+  padding: 12px 14px;
+  display: none;
+  pointer-events: none; /* 不挡住鼠标事件 */
+}
+
+.paper-tooltip .tt-title{
+  font-weight: 650;
+  color: var(--primary);
+  margin: 0 0 6px 0;
+  font-size: 0.98em;
+}
+
+.paper-tooltip .tt-abs{
+  margin: 0;
+  color: #1f2a37;
+  font-size: 0.92em;
+  line-height: 1.45;
+}
+
+.paper-tooltip .tt-hint{
+  margin: 8px 0 0 0;
+  color: var(--gray);
+  font-size: 0.82em;
+}
+
+        
+
+
         
     </style>
 </head>
@@ -436,7 +495,9 @@
   The bracketed identifiers preceding each publication indicate the arXiv posting order, where <strong>[25a]</strong> refers to the first paper posted on arXiv in 2025, followed by <strong>[25b]</strong>, <strong>[25c]</strong>, etc.
 </p>
     <ul>
-       <li>67 [26a] Zhi-Feng Zhang, Yizhou Huang, Qing-Rui Wang, and PY, <a href="https://arxiv.org/abs/2601.01523" target="_blank">arXiv:2601.01523</a>. Title: Field-Theoretical Construction of Conserved Currents, Non-Invertible Symmetries, and Mixed Anomalies in Three-Dimensional Non-Abelian Topological Order. 标题：三维非阿贝尔拓扑序中守恒流、非可逆对称性与混合反常的场论构造<span class="paper-tags"><span class="ptag">[TO]</span><span class="ptag">[CFTT]</span><span class="ptag">[GSYM]</span><span class="ptag">[QANO]</span></span></li>
+       <li  data-abstract="A modern perspective views topological order as a symmetry-breaking phase of generalized symmetries, making the identification of such symmetries, especially in non-Abelian topological orders, a fundamental task. In this work, we investigate generalized symmetries, with particular emphasis on non-invertible ones, in three-dimensional non-Abelian topological orders hosting both particle- and loop-like excitations. We adopt a continuum topological field theory description, focusing on twisted $BF$ theories with gauge group $G=\prod_i \mathbb{Z}_{N_i}$ and an $a \wedge a \wedge b$ twisted term. This field theory supports Borromean-Rings braiding and realizes non-Abelian topological order, which for $G=(\mathbb{Z}_2)^3$ admits a microscopic realization via the $\mathbb{D}_4$ Kitaev quantum double lattice model. We systematically identify all generalized symmetry operators by extracting conserved currents from the equations of motion. Two distinct classes of currents emerge: type-I currents, which generate invertible higher-form symmetries, and type-II currents, which give rise to non-invertible higher-form symmetries. The non-invertibility originates from projectors accompanying the symmetry operators, which restrict admissible gauge-field configurations. We further analyze the fusion rules of these symmetries, showing that invertible symmetries admit inverses, while non-invertible symmetries fuse through multiple channels. Finally, we study mixed anomalies among these generalized symmetries by simultaneously coupling multiple currents to proper types of background gauge fields and examining their gaugeability. We identify two types of mixed anomalies: one cancellable by topological field theories in one higher dimension, and another representing an intrinsic gauging obstruction encoded in the $(3+1)$D continuum topological field theory. Our results provide a concrete field-theoretical construction of conserved currents and a unified characterization of invertible and non-invertible higher-form symmetries in three-dimensional non-Abelian topological orders, offering a natural framework for studying $(2+1)$D systems via symmetry topological field theory and topological holography.
+">
+           67 [26a] Zhi-Feng Zhang, Yizhou Huang, Qing-Rui Wang, and PY, <a href="https://arxiv.org/abs/2601.01523" target="_blank">arXiv:2601.01523</a>. Title: Field-Theoretical Construction of Conserved Currents, Non-Invertible Symmetries, and Mixed Anomalies in Three-Dimensional Non-Abelian Topological Order. 标题：三维非阿贝尔拓扑序中守恒流、非可逆对称性与混合反常的场论构造<span class="paper-tags"><span class="ptag">[TO]</span><span class="ptag">[CFTT]</span><span class="ptag">[GSYM]</span><span class="ptag">[QANO]</span></span></li>
 
 <li>66 [25g] Yizhou Huang, Zhi-Feng Zhang, Qing-Rui Wang, and PY, <a href="https://arxiv.org/abs/2512.21148" target="_blank">arXiv:2512.21148</a>. Title: Bridging microscopic constructions and continuum topological field theory of three-dimensional non-Abelian topological order. 标题：三维非阿贝尔拓扑序的微观构造与连续拓扑场论之间的桥梁<span class="paper-tags"><span class="ptag">[TO]</span><span class="ptag">[CFTT]</span><span class="ptag">[LATT]</span><span class="ptag">[STBL]</span></span></li>
 
@@ -578,5 +639,89 @@
         <p>&copy; 2026 Professor Peng Ye. All rights reserved.</p>
         <p>School of Physics, Sun Yat-sen University</p>
     </footer>
+    <div id="paperTooltip" class="paper-tooltip" role="tooltip" aria-hidden="true">
+  <div class="tt-title" id="ttTitle"></div>
+  <p class="tt-abs" id="ttAbs"></p>
+  <div class="tt-hint" id="ttHint">Hover to preview abstract</div>
+</div>
+<script>
+(function () {
+  const tooltip = document.getElementById('paperTooltip');
+  const ttTitle = document.getElementById('ttTitle');
+  const ttAbs = document.getElementById('ttAbs');
+
+  // 你可以把触发范围限制在 Publications 区域：
+  // const pubSection = document.querySelector('section:nth-of-type(?)'); // 不建议用这种
+  // 更稳：只要 li[data-abstract] 都触发
+  const items = document.querySelectorAll('li[data-abstract]');
+
+  const OFFSET = 14; // 鼠标与浮窗的偏移
+  const MARGIN = 10; // 离窗口边缘最小距离
+
+  function showTooltip(li, evt) {
+    const abs = li.getAttribute('data-abstract');
+    if (!abs || !abs.trim()) return;
+
+    // 标题：取 li 的前一段文本作为标题（你也可以改成更精确的选择器）
+    // 这里简单拿 arXiv 链接文本 + Title 前半截（尽量不复杂）
+    const arxiv = li.querySelector('a[href*="arxiv.org/abs/"]');
+    const arxivText = arxiv ? arxiv.textContent.trim() : 'Paper';
+    ttTitle.textContent = arxivText;
+
+    ttAbs.textContent = abs.trim();
+
+    tooltip.style.display = 'block';
+    tooltip.setAttribute('aria-hidden', 'false');
+    moveTooltip(evt);
+  }
+
+  function hideTooltip() {
+    tooltip.style.display = 'none';
+    tooltip.setAttribute('aria-hidden', 'true');
+  }
+
+  function moveTooltip(evt) {
+    if (tooltip.style.display !== 'block') return;
+
+    // 先把 tooltip 放到鼠标右下
+    let x = evt.clientX + OFFSET;
+    let y = evt.clientY + OFFSET;
+
+    // 再做“防出界”处理
+    const rect = tooltip.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    if (x + rect.width + MARGIN > vw) {
+      x = Math.max(MARGIN, vw - rect.width - MARGIN);
+    }
+    if (y + rect.height + MARGIN > vh) {
+      y = Math.max(MARGIN, evt.clientY - rect.height - OFFSET);
+    }
+
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  }
+
+  // 事件绑定
+  items.forEach(li => {
+    li.addEventListener('mouseenter', (evt) => showTooltip(li, evt));
+    li.addEventListener('mousemove', moveTooltip);
+    li.addEventListener('mouseleave', hideTooltip);
+
+    // 可选：键盘可访问性（Tab 到这条时显示）
+    li.setAttribute('tabindex', '0');
+    li.addEventListener('focus', (evt) => showTooltip(li, evt));
+    li.addEventListener('blur', hideTooltip);
+  });
+
+  window.addEventListener('scroll', () => {
+    // 滚动时隐藏，避免位置错乱
+    hideTooltip();
+  }, { passive: true });
+})();
+</script>
+
+    
 </body>
 </html>
