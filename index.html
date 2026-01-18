@@ -655,7 +655,7 @@ window.MathJax = {
   // 你可以把触发范围限制在 Publications 区域：
   // const pubSection = document.querySelector('section:nth-of-type(?)'); // 不建议用这种
   // 更稳：只要 li[data-abstract] 都触发
-  const items = document.querySelectorAll('li[data-abstract]');
+  const items = document.querySelectorAll('li.paper-item:has(.paper-abstract)');
 
   const OFFSET = 14; // 鼠标与浮窗的偏移
   const MARGIN = 10; // 离窗口边缘最小距离
